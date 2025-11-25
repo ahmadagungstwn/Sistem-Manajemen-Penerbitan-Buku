@@ -219,7 +219,7 @@ export const Sidebar = ({
               </div>
               <div>
                 <h1 className="text-lg font-bold text-sidebar-foreground">
-                  SIM Buku
+                  SIPIB Buku
                 </h1>
                 <p className="text-xs text-sidebar-foreground/60">
                   Manajemen Penerbitan
