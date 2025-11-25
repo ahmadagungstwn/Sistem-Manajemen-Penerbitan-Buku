@@ -1,4 +1,4 @@
-# SIM Buku - Sistem Informasi Manajemen Penerbitan dan Inventaris Buku
+# Sistem Informasi Manajemen Penerbitan dan Inventaris Buku
 
 Dashboard PWA untuk manajemen penerbitan dan inventaris buku menggunakan ReactJS dan IndexedDB.
 
