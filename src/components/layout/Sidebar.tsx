@@ -2,7 +2,7 @@
 // Sidebar navigasi dengan fitur collapse dan responsive mobile
 
 import { NavLink } from "@/components/NavLink";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import {
   BookOpen,
   Users,
@@ -16,7 +16,8 @@ import {
   UserCircle,
   LogOut,
   Archive,
-  Menu,
+  UserCheck,
+  ShoppingCart,
   X,
   ChevronLeft,
   ChevronRight,
@@ -50,6 +51,8 @@ export const Sidebar = ({
     { icon: Archive, label: "Rak", path: "/rak" },
     { icon: Package, label: "Stok Buku", path: "/stok-buku" },
     { icon: Store, label: "Toko", path: "/toko" },
+    { icon: UserCheck, label: "Pelanggan", path: "/pelanggan" },
+    { icon: ShoppingCart, label: "Penjualan", path: "/penjualan" },
     { icon: TruckIcon, label: "Distribusi", path: "/distribusi" },
     { icon: RotateCcw, label: "Retur Buku", path: "/retur" },
   ];
@@ -78,26 +81,26 @@ export const Sidebar = ({
           "hidden lg:flex",
           isOpen ? "lg:w-64" : "lg:w-20",
           // Mobile - Always show icons only
-          "lg:translate-x-0"
+          "lg:translate-x-0",
         )}
       >
         {/* Header Desktop */}
         <div
           className={cn(
             "p-6 border-b border-sidebar-border transition-all duration-300",
-            !isOpen && "lg:p-3"
+            !isOpen && "lg:p-3",
           )}
         >
           <div
             className={cn(
               "flex items-center gap-3",
-              !isOpen && "lg:flex-col lg:gap-2"
+              !isOpen && "lg:flex-col lg:gap-2",
             )}
           >
             <div
               className={cn(
                 "p-3 bg-primary/10 rounded-full flex-shrink-0",
-                !isOpen && "lg:p-2"
+                !isOpen && "lg:p-2",
               )}
             >
               <img
@@ -105,7 +108,7 @@ export const Sidebar = ({
                 alt="Logo"
                 className={cn(
                   "object-contain",
-                  isOpen ? "h-12 w-12" : "lg:h-8 lg:w-8"
+                  isOpen ? "h-12 w-12" : "lg:h-8 lg:w-8",
                 )}
               />
             </div>
@@ -129,7 +132,7 @@ export const Sidebar = ({
             onClick={onToggle}
             className={cn(
               "mt-4 w-full hidden lg:flex bg-[#ba3838] hover:bg-[#c12727]",
-              !isOpen && "justify-center"
+              !isOpen && "justify-center",
             )}
           >
             {isOpen ? (
@@ -148,7 +151,7 @@ export const Sidebar = ({
               to={item.path}
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors",
-                !isOpen && "lg:justify-center lg:px-2"
+                !isOpen && "lg:justify-center lg:px-2",
               )}
               activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
               title={!isOpen ? item.label : undefined}
@@ -203,7 +206,7 @@ export const Sidebar = ({
         className={cn(
           "fixed top-0 left-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col transition-transform duration-300 z-50",
           "lg:hidden",
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          isMobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {/* Header Mobile */}

@@ -30,7 +30,7 @@ import { db, Buku as BukuType } from "@/db/database";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Buku() {
   const { user } = useAuth();
@@ -55,7 +55,7 @@ export default function Buku() {
   const filteredBuku = buku?.filter(
     (item) =>
       item.judul.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.isbn.toLowerCase().includes(searchTerm.toLowerCase())
+      item.isbn.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {

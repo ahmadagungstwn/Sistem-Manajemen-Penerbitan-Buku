@@ -1,36 +1,50 @@
 // File: src/pages/Penulis.tsx
 // Halaman manajemen data penulis
 
-import { useState } from 'react';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { db, Penulis as PenulisType } from '@/db/database';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from "react";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { db, Penulis as PenulisType } from "@/db/database";
+import { useLiveQuery } from "dexie-react-hooks";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Penulis() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState<Partial<PenulisType>>({
-    penulis_id: '',
-    nama: '',
-    negara: '',
+    penulis_id: "",
+    nama: "",
+    negara: "",
   });
 
   const penulis = useLiveQuery(() => db.penulis.toArray());
 
-  const filteredPenulis = penulis?.filter(item =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.negara.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPenulis = penulis?.filter(
+    (item) =>
+      item.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.negara.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,24 +54,24 @@ export default function Penulis() {
         await db.penulis.update(editingId, formData);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Mengupdate penulis: ${formData.nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Penulis berhasil diupdate');
+        toast.success("Penulis berhasil diupdate");
       } else {
         await db.penulis.add(formData as PenulisType);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Menambahkan penulis: ${formData.nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Penulis berhasil ditambahkan');
+        toast.success("Penulis berhasil ditambahkan");
       }
       resetForm();
     } catch (error) {
-      toast.error('Gagal menyimpan data');
+      toast.error("Gagal menyimpan data");
     }
   };
 
@@ -68,24 +82,24 @@ export default function Penulis() {
   };
 
   const handleDelete = async (id: string, nama: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus penulis ini?')) {
+    if (window.confirm("Apakah Anda yakin ingin menghapus penulis ini?")) {
       try {
         await db.penulis.delete(id);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Menghapus penulis: ${nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Penulis berhasil dihapus');
+        toast.success("Penulis berhasil dihapus");
       } catch (error) {
-        toast.error('Gagal menghapus data');
+        toast.error("Gagal menghapus data");
       }
     }
   };
 
   const resetForm = () => {
-    setFormData({ penulis_id: '', nama: '', negara: '' });
+    setFormData({ penulis_id: "", nama: "", negara: "" });
     setEditingId(null);
     setIsOpen(false);
   };
@@ -107,7 +121,9 @@ export default function Penulis() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editingId ? 'Edit Penulis' : 'Tambah Penulis Baru'}</DialogTitle>
+                <DialogTitle>
+                  {editingId ? "Edit Penulis" : "Tambah Penulis Baru"}
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -115,7 +131,9 @@ export default function Penulis() {
                   <Input
                     id="penulis_id"
                     value={formData.penulis_id}
-                    onChange={(e) => setFormData({ ...formData, penulis_id: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, penulis_id: e.target.value })
+                    }
                     disabled={!!editingId}
                     placeholder="P001"
                     required
@@ -126,7 +144,9 @@ export default function Penulis() {
                   <Input
                     id="nama"
                     value={formData.nama}
-                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nama: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -135,7 +155,9 @@ export default function Penulis() {
                   <Input
                     id="negara"
                     value={formData.negara}
-                    onChange={(e) => setFormData({ ...formData, negara: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, negara: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -144,7 +166,7 @@ export default function Penulis() {
                     Batal
                   </Button>
                   <Button type="submit">
-                    {editingId ? 'Update' : 'Simpan'}
+                    {editingId ? "Update" : "Simpan"}
                   </Button>
                 </div>
               </form>
@@ -179,7 +201,9 @@ export default function Penulis() {
                   {filteredPenulis && filteredPenulis.length > 0 ? (
                     filteredPenulis.map((item) => (
                       <TableRow key={item.penulis_id}>
-                        <TableCell className="font-medium">{item.penulis_id}</TableCell>
+                        <TableCell className="font-medium">
+                          {item.penulis_id}
+                        </TableCell>
                         <TableCell>{item.nama}</TableCell>
                         <TableCell>{item.negara}</TableCell>
                         <TableCell className="text-right">
@@ -193,7 +217,9 @@ export default function Penulis() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleDelete(item.penulis_id, item.nama)}
+                            onClick={() =>
+                              handleDelete(item.penulis_id, item.nama)
+                            }
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -202,7 +228,10 @@ export default function Penulis() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground">
+                      <TableCell
+                        colSpan={4}
+                        className="text-center text-muted-foreground"
+                      >
                         Tidak ada data
                       </TableCell>
                     </TableRow>

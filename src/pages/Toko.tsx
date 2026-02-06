@@ -1,34 +1,47 @@
 // File: src/pages/Toko.tsx
-import { useState } from 'react';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { db, Toko as TokoType } from '@/db/database';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from "react";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { db, Toko as TokoType } from "@/db/database";
+import { useLiveQuery } from "dexie-react-hooks";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Toko() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState<Partial<TokoType>>({
-    toko_id: '',
-    nama: '',
-    alamat: '',
-    telepon: '',
+    toko_id: "",
+    nama: "",
+    alamat: "",
+    telepon: "",
   });
 
   const toko = useLiveQuery(() => db.toko.toArray());
-  const filteredToko = toko?.filter(item =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredToko = toko?.filter((item) =>
+    item.nama.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,24 +51,24 @@ export default function Toko() {
         await db.toko.update(editingId, formData);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Mengupdate toko: ${formData.nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Toko berhasil diupdate');
+        toast.success("Toko berhasil diupdate");
       } else {
         await db.toko.add(formData as TokoType);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Menambahkan toko: ${formData.nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Toko berhasil ditambahkan');
+        toast.success("Toko berhasil ditambahkan");
       }
       resetForm();
     } catch (error) {
-      toast.error('Gagal menyimpan data');
+      toast.error("Gagal menyimpan data");
     }
   };
 
@@ -66,24 +79,24 @@ export default function Toko() {
   };
 
   const handleDelete = async (id: string, nama: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus toko ini?')) {
+    if (window.confirm("Apakah Anda yakin ingin menghapus toko ini?")) {
       try {
         await db.toko.delete(id);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Menghapus toko: ${nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Toko berhasil dihapus');
+        toast.success("Toko berhasil dihapus");
       } catch (error) {
-        toast.error('Gagal menghapus data');
+        toast.error("Gagal menghapus data");
       }
     }
   };
 
   const resetForm = () => {
-    setFormData({ toko_id: '', nama: '', alamat: '', telepon: '' });
+    setFormData({ toko_id: "", nama: "", alamat: "", telepon: "" });
     setEditingId(null);
     setIsOpen(false);
   };
@@ -105,7 +118,9 @@ export default function Toko() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editingId ? 'Edit Toko' : 'Tambah Toko Baru'}</DialogTitle>
+                <DialogTitle>
+                  {editingId ? "Edit Toko" : "Tambah Toko Baru"}
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -113,7 +128,9 @@ export default function Toko() {
                   <Input
                     id="toko_id"
                     value={formData.toko_id}
-                    onChange={(e) => setFormData({ ...formData, toko_id: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, toko_id: e.target.value })
+                    }
                     disabled={!!editingId}
                     placeholder="T001"
                     required
@@ -124,7 +141,9 @@ export default function Toko() {
                   <Input
                     id="nama"
                     value={formData.nama}
-                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nama: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -133,7 +152,9 @@ export default function Toko() {
                   <Textarea
                     id="alamat"
                     value={formData.alamat}
-                    onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, alamat: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -142,13 +163,19 @@ export default function Toko() {
                   <Input
                     id="telepon"
                     value={formData.telepon}
-                    onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, telepon: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={resetForm}>Batal</Button>
-                  <Button type="submit">{editingId ? 'Update' : 'Simpan'}</Button>
+                  <Button type="button" variant="outline" onClick={resetForm}>
+                    Batal
+                  </Button>
+                  <Button type="submit">
+                    {editingId ? "Update" : "Simpan"}
+                  </Button>
                 </div>
               </form>
             </DialogContent>
@@ -183,15 +210,27 @@ export default function Toko() {
                   {filteredToko && filteredToko.length > 0 ? (
                     filteredToko.map((item) => (
                       <TableRow key={item.toko_id}>
-                        <TableCell className="font-medium">{item.toko_id}</TableCell>
+                        <TableCell className="font-medium">
+                          {item.toko_id}
+                        </TableCell>
                         <TableCell>{item.nama}</TableCell>
                         <TableCell>{item.alamat}</TableCell>
                         <TableCell>{item.telepon}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(item)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(item.toko_id, item.nama)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              handleDelete(item.toko_id, item.nama)
+                            }
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TableCell>
@@ -199,7 +238,12 @@ export default function Toko() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">Tidak ada data</TableCell>
+                      <TableCell
+                        colSpan={5}
+                        className="text-center text-muted-foreground"
+                      >
+                        Tidak ada data
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>

@@ -1,33 +1,46 @@
 // File: src/pages/Kategori.tsx
-import { useState } from 'react';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { db, Kategori as KategoriType } from '@/db/database';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from "react";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { db, Kategori as KategoriType } from "@/db/database";
+import { useLiveQuery } from "dexie-react-hooks";
+import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Kategori() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState<Partial<KategoriType>>({
-    kategori_id: '',
-    nama: '',
-    deskripsi: '',
+    kategori_id: "",
+    nama: "",
+    deskripsi: "",
   });
 
   const kategori = useLiveQuery(() => db.kategori.toArray());
-  const filteredKategori = kategori?.filter(item =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredKategori = kategori?.filter((item) =>
+    item.nama.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,24 +50,24 @@ export default function Kategori() {
         await db.kategori.update(editingId, formData);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Mengupdate kategori: ${formData.nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Kategori berhasil diupdate');
+        toast.success("Kategori berhasil diupdate");
       } else {
         await db.kategori.add(formData as KategoriType);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Menambahkan kategori: ${formData.nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Kategori berhasil ditambahkan');
+        toast.success("Kategori berhasil ditambahkan");
       }
       resetForm();
     } catch (error) {
-      toast.error('Gagal menyimpan data');
+      toast.error("Gagal menyimpan data");
     }
   };
 
@@ -65,24 +78,24 @@ export default function Kategori() {
   };
 
   const handleDelete = async (id: string, nama: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
+    if (window.confirm("Apakah Anda yakin ingin menghapus kategori ini?")) {
       try {
         await db.kategori.delete(id);
         await db.log_aktivitas.add({
           log_id: `LOG-${Date.now()}`,
-          username: user?.username || 'unknown',
+          username: user?.username || "unknown",
           aktivitas: `Menghapus kategori: ${nama}`,
-          waktu: new Date().toISOString()
+          waktu: new Date().toISOString(),
         });
-        toast.success('Kategori berhasil dihapus');
+        toast.success("Kategori berhasil dihapus");
       } catch (error) {
-        toast.error('Gagal menghapus data');
+        toast.error("Gagal menghapus data");
       }
     }
   };
 
   const resetForm = () => {
-    setFormData({ kategori_id: '', nama: '', deskripsi: '' });
+    setFormData({ kategori_id: "", nama: "", deskripsi: "" });
     setEditingId(null);
     setIsOpen(false);
   };
@@ -92,7 +105,9 @@ export default function Kategori() {
       <div className="p-8">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Data Kategori</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              Data Kategori
+            </h1>
             <p className="text-muted-foreground">Kelola kategori buku</p>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -104,7 +119,9 @@ export default function Kategori() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editingId ? 'Edit Kategori' : 'Tambah Kategori Baru'}</DialogTitle>
+                <DialogTitle>
+                  {editingId ? "Edit Kategori" : "Tambah Kategori Baru"}
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -112,7 +129,9 @@ export default function Kategori() {
                   <Input
                     id="kategori_id"
                     value={formData.kategori_id}
-                    onChange={(e) => setFormData({ ...formData, kategori_id: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, kategori_id: e.target.value })
+                    }
                     disabled={!!editingId}
                     placeholder="K001"
                     required
@@ -123,7 +142,9 @@ export default function Kategori() {
                   <Input
                     id="nama"
                     value={formData.nama}
-                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nama: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -132,13 +153,19 @@ export default function Kategori() {
                   <Textarea
                     id="deskripsi"
                     value={formData.deskripsi}
-                    onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, deskripsi: e.target.value })
+                    }
                     required
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={resetForm}>Batal</Button>
-                  <Button type="submit">{editingId ? 'Update' : 'Simpan'}</Button>
+                  <Button type="button" variant="outline" onClick={resetForm}>
+                    Batal
+                  </Button>
+                  <Button type="submit">
+                    {editingId ? "Update" : "Simpan"}
+                  </Button>
                 </div>
               </form>
             </DialogContent>
@@ -172,14 +199,26 @@ export default function Kategori() {
                   {filteredKategori && filteredKategori.length > 0 ? (
                     filteredKategori.map((item) => (
                       <TableRow key={item.kategori_id}>
-                        <TableCell className="font-medium">{item.kategori_id}</TableCell>
+                        <TableCell className="font-medium">
+                          {item.kategori_id}
+                        </TableCell>
                         <TableCell>{item.nama}</TableCell>
                         <TableCell>{item.deskripsi}</TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(item)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(item.kategori_id, item.nama)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() =>
+                              handleDelete(item.kategori_id, item.nama)
+                            }
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </TableCell>
@@ -187,7 +226,12 @@ export default function Kategori() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center text-muted-foreground">Tidak ada data</TableCell>
+                      <TableCell
+                        colSpan={4}
+                        className="text-center text-muted-foreground"
+                      >
+                        Tidak ada data
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>

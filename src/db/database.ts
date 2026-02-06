@@ -70,6 +70,24 @@ export interface ReturBuku {
   kondisi: string;
 }
 
+export interface Pelanggan {
+  pelanggan_id: string;
+  nama: string;
+  alamat: string;
+  telepon: string;
+  email: string;
+}
+
+export interface Penjualan {
+  penjualan_id: string;
+  pelanggan_id: string;
+  isbn: string;
+  jumlah: number;
+  tanggal_jual: string;
+  total_harga: number;
+  keterangan: string;
+}
+
 export interface User {
   username: string;
   password: string;
@@ -95,13 +113,15 @@ export class BukuDatabase extends Dexie {
   toko!: Table<Toko>;
   distribusi!: Table<Distribusi>;
   retur_buku!: Table<ReturBuku>;
+  pelanggan!: Table<Pelanggan>;
+  penjualan!: Table<Penjualan>;
   users!: Table<User>;
   log_aktivitas!: Table<LogAktivitas>;
 
   constructor() {
     super("BukuDatabase");
 
-    this.version(1).stores({
+    this.version(2).stores({
       penulis: "penulis_id, nama, negara",
       penerbit: "penerbit_id, nama",
       kategori: "kategori_id, nama",
@@ -111,6 +131,8 @@ export class BukuDatabase extends Dexie {
       toko: "toko_id, nama",
       distribusi: "distribusi_id, isbn, toko_id, tanggal_kirim",
       retur_buku: "retur_id, distribusi_id, tanggal_retour",
+      pelanggan: "pelanggan_id, nama, telepon, email",
+      penjualan: "penjualan_id, pelanggan_id, isbn, tanggal_jual",
       users: "username, role",
       log_aktivitas: "log_id, username, waktu",
     });
@@ -128,7 +150,7 @@ export async function seedInitialData() {
     // Create default admin user
     await db.users.add({
       username: "teamsipib",
-      password: "password",
+      password: "teamsipib2026",
       role: "admin",
       nama_lengkap: "Administrator",
     });

@@ -3,7 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { seedInitialData } from "@/db/database";
 
@@ -16,6 +17,8 @@ import Kategori from "./pages/Kategori";
 import Rak from "./pages/Rak";
 import StokBuku from "./pages/StokBuku";
 import Toko from "./pages/Toko";
+import Pelanggan from "./pages/Pelanggan";
+import Penjualan from "./pages/Penjualan";
 import Distribusi from "./pages/Distribusi";
 import ReturBuku from "./pages/ReturBuku";
 import NotFound from "./pages/NotFound";
@@ -107,6 +110,22 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <StokBuku />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pelanggan"
+          element={
+            <ProtectedRoute>
+              <Pelanggan />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/penjualan"
+          element={
+            <ProtectedRoute>
+              <Penjualan />
             </ProtectedRoute>
           }
         />
